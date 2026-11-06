@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Life Cards</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EEEAF8;--surface:#fff;--ink:#1E1A3A;--muted:#6A6590;--line:#d9d3ee;--back1:#2A2368;--back2:#4637a8;--gold:#FFC857;--shadow:0 20px 50px -18px rgba(42,35,104,.45);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#2A1F78;--surface:#3A2E9C;--ink:#F6F3FF;--muted:#C4BDF5;--line:#5646C4;--back1:#17104A;--back2:#4B3BC4;--shadow:0 20px 50px -18px rgba(0,0,0,.7);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#2A1F78;--surface:#3A2E9C;--ink:#F6F3FF;--muted:#C4BDF5;--line:#5646C4;--back1:#17104A;--back2:#4B3BC4;--shadow:0 20px 50px -18px rgba(0,0,0,.7);color-scheme:dark}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;display:flex;flex-direction:column;align-items:center;transition:background .4s,color .4s;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;background:radial-gradient(600px 400px at 15% 0,rgba(123,108,246,.22),transparent 70%),radial-gradient(500px 400px at 100% 100%,rgba(242,107,181,.16),transparent 70%);pointer-events:none;z-index:0}
+header,main,footer{position:relative;z-index:1;width:100%;max-width:520px;padding:0 20px}
+header{display:flex;justify-content:space-between;align-items:center;padding-top:18px;gap:10px}
+h1{margin:0;font-size:1.45rem;font-weight:800;letter-spacing:-.02em;line-height:1}
+.sub{margin:4px 0 0;color:var(--muted);font-size:.85rem;font-weight:500}
+.tools{display:flex;gap:8px;align-items:center}
+.seg{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px}
+.seg button{border:0;background:none;color:var(--muted);font:inherit;font-weight:700;font-size:.78rem;padding:6px 11px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--back2);color:#fff}
+.icon{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:1.05rem;cursor:pointer;display:grid;place-items:center}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+main{display:flex;flex-direction:column;align-items:center;flex:1;padding-top:26px}
+.stage{position:relative;width:min(76vw,310px);aspect-ratio:2/3;perspective:1100px;margin-bottom:22px}
+.layer{position:absolute;inset:0;border-radius:24px;background:linear-gradient(145deg,var(--back1),var(--back2));border:2px solid rgba(255,200,87,.35);box-shadow:var(--shadow)}
+.l1{transform:translate(9px,9px) rotate(3deg);opacity:.75}.l2{transform:translate(-8px,6px) rotate(-3.5deg);opacity:.5}
+.tilt{position:absolute;inset:0;transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .15s ease-out;transform-style:preserve-3d}
+.card{position:absolute;inset:0;border:0;padding:0;background:none;cursor:pointer;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.3,1.3,.5,1);font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
+.card.flipped{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:24px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;box-shadow:var(--shadow)}
+.back{background:repeating-linear-gradient(45deg,rgba(255,255,255,.06) 0 10px,transparent 10px 20px),repeating-linear-gradient(-45deg,rgba(255,255,255,.06) 0 10px,transparent 10px 20px),linear-gradient(145deg,var(--back1),var(--back2));border:2px solid var(--gold);display:grid;place-items:center}
+.back::before{content:"";position:absolute;inset:14px;border:1.5px solid rgba(255,200,87,.6);border-radius:16px}
+.emblem{width:46%;aspect-ratio:1;border-radius:50%;background:var(--gold);color:var(--back1);display:grid;place-items:center;font-size:clamp(3rem,16vw,4.6rem);font-weight:800;box-shadow:0 0 0 10px rgba(255,200,87,.2);animation:pulse 2.6s ease-in-out infinite}
+.card.flipped .emblem{animation:none}
+@keyframes pulse{50%{transform:scale(1.07)}}
+.tap{position:absolute;bottom:26px;left:0;right:0;text-align:center;color:var(--gold);font-weight:700;font-size:.9rem}
+.front{background:var(--surface);transform:rotateY(180deg);display:flex;flex-direction:column;text-align:left;border:1px solid var(--line)}
+.band{background:var(--c,#7B6CF6);color:#fff;padding:14px 20px;font-weight:800;font-size:1rem;display:flex;justify-content:space-between;align-items:center}
+.band span:last-child{font-size:1.4rem}
+.q{flex:1;display:flex;align-items:center;padding:20px 22px;font-size:clamp(1.3rem,6.2vw,1.75rem);font-weight:700;line-height:1.22;letter-spacing:-.015em}
+.pip{padding:0 22px 16px;color:var(--c);font-size:1.5rem;align-self:flex-end;transform:rotate(180deg)}
+.actions{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:6px}
+.go{border:0;border-radius:999px;background:var(--gold);color:#2A2368;font:inherit;font-weight:800;font-size:1.05rem;padding:14px 34px;cursor:pointer;box-shadow:0 10px 24px -10px rgba(255,200,87,.9);transition:transform .15s}
+.go:active{transform:scale(.95)}
+.hint{color:var(--muted);font-size:.8rem;margin:0}
+.count{font-weight:700;font-size:.9rem;color:var(--muted)}.count b{display:inline-block;color:var(--ink);font-size:1.15rem}
+.count b.bump{animation:bump .4s}@keyframes bump{40%{transform:scale(1.5)}}
+.recent{width:100%;margin-top:22px;padding-bottom:28px}
+.recent h2{font-size:.85rem;color:var(--muted);margin:0 0 8px;font-weight:700}
+.chips{display:flex;flex-direction:column;gap:6px}
+.chip{display:flex;gap:10px;align-items:center;text-align:left;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:9px 12px;font:inherit;font-size:.85rem;font-weight:500;color:var(--ink);cursor:pointer}
+.chip i{flex:none;width:10px;height:10px;border-radius:50%;background:var(--c)}
+.chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.exit{display:none}
+body.full .exit{display:block;position:fixed;top:calc(env(safe-area-inset-top,0px) + 18px);left:20px;z-index:3;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:700;font-size:.85rem;padding:9px 14px;border-radius:999px;cursor:pointer}
+body.full{overflow:hidden}
+body.full .stage{position:fixed;inset:0;width:auto;aspect-ratio:auto;margin:0;z-index:0}
+body.full .layer,body.full .recent,body.full .hint{display:none}
+body.full .tilt{transform:none!important}
+body.full .face{border-radius:0;box-shadow:none}
+body.full .back::before{inset:16px;border-radius:20px}
+body.full .tap{bottom:130px}
+body.full header>div:first-child{visibility:hidden}
+body.full .band{padding:calc(env(safe-area-inset-top,0px) + 78px) 24px 18px;font-size:1.15rem}
+body.full .q{font-size:clamp(1.8rem,8vw,3.4rem);padding:24px 28px;width:100%;max-width:780px;margin:0 auto}
+body.full .pip{padding:0 28px 175px;font-size:2rem}
+body.full .actions{position:fixed;left:0;right:0;bottom:max(18px,env(safe-area-inset-bottom));z-index:2;margin:0}
+body.full .count{background:var(--surface);padding:4px 14px;border-radius:999px;margin:0;border:1px solid var(--line)}
+.skip{background:none;border:1.5px dashed var(--muted);color:var(--ink);font:inherit;font-weight:700;font-size:.9rem;padding:9px 20px;border-radius:999px;cursor:pointer}
+.skip[hidden]{display:none}
+body.full .skip{background:var(--surface)}
+.q ol{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:14px;font-size:.75em;width:100%}
+.q li{display:flex;gap:10px;align-items:flex-start;line-height:1.22}
+.q li b{flex:none;width:1.7em;height:1.7em;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font-size:.8em}
+.tut{position:fixed;inset:0;z-index:50;background:rgba(10,8,30,.62);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:grid;place-items:center;padding:20px}
+.tut[hidden]{display:none}
+.tbox{position:relative;width:min(100%,400px);background:var(--surface);border:1px solid var(--line);border-radius:26px;padding:36px 26px 22px;text-align:center;box-shadow:var(--shadow);animation:pop .35s cubic-bezier(.3,1.4,.5,1)}
+@keyframes pop{from{transform:scale(.9);opacity:0}}
+.tskip{position:absolute;top:12px;right:14px;background:none;border:0;color:var(--muted);font:inherit;font-weight:700;font-size:.85rem;cursor:pointer;padding:6px 8px}
+.tico{font-size:3rem;line-height:1;margin-bottom:12px}
+.tbox h2{margin:0 0 8px;font-size:1.4rem;font-weight:800;letter-spacing:-.02em}
+.tbox p{margin:0 auto;min-height:6em;color:var(--muted);font-size:.98rem;line-height:1.45;font-weight:500}
+.dots{display:flex;justify-content:center;gap:7px;margin:12px 0 14px}
+.dots i{width:8px;height:8px;border-radius:50%;background:var(--line);transition:.25s}
+.dots i.on{width:22px;border-radius:99px;background:var(--gold)}
+.never{display:flex;align-items:center;justify-content:center;gap:8px;font-size:.85rem;font-weight:600;cursor:pointer;margin-bottom:14px}
+.never input{width:18px;height:18px;accent-color:#7B6CF6}
+.trow{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.tb{background:none;border:1.5px solid var(--line);color:var(--ink);font:inherit;font-weight:700;border-radius:999px;padding:11px 20px;cursor:pointer}
+.tgo{padding:12px 26px;font-size:1rem;margin-left:auto}
+footer{padding:4px 20px 20px;text-align:center;font-size:.8rem;color:var(--muted);font-weight:600}
+footer a{color:var(--ink);font-weight:800;text-decoration:none;border-bottom:2px solid var(--gold)}
+footer a:hover{color:var(--gold)}
+body.full footer{display:none}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<header>
+  <div><h1 data-t="title">Life Cards</h1><p class="sub" data-t="sub"></p></div>
+  <div class="tools">
+    <div class="seg" role="group" aria-label="Language"><button id="en" aria-pressed="true">EN</button><button id="tl" aria-pressed="false">TL</button></div>
+    <button class="icon" id="help" aria-label="Tutorial">?</button>
+    <button class="icon" id="full" aria-pressed="false" aria-label="Full-screen card mode">⤢</button>
+    <button class="icon" id="theme" aria-label="Toggle theme">☾</button>
+  </div>
+</header>
+<main>
+  <button class="exit" id="exit" data-t="normal"></button>
+  <div class="stage" id="stage">
+    <div class="layer l2"></div><div class="layer l1"></div>
+    <div class="tilt" id="tilt">
+      <button class="card" id="card" aria-live="polite">
+        <div class="face back"><div class="emblem">?</div><div class="tap" data-t="tap"></div></div>
+        <div class="face front" id="front">
+          <div class="band"><span id="cat"></span><span id="glyph"></span></div>
+          <div class="q" id="q"></div>
+          <div class="pip" id="pip"></div>
+        </div>
+      </button>
+    </div>
+  </div>
+  <div class="actions">
+    <button class="go" id="go" data-t="draw"></button>
+    <button class="skip" id="skip" data-t="skip" hidden></button>
+    <p class="count"><span data-t="drawn"></span>: <b id="n">0</b></p>
+    <p class="hint" data-t="hint"></p>
+  </div>
+  <section class="recent" id="recent" hidden><h2 data-t="recent"></h2><div class="chips" id="chips"></div></section>
+</main>
+<footer><span data-t="dev"></span>: <a href="https://princegideon15-portfolio.vercel.app/" target="_blank" rel="noopener noreferrer">GPDB</a></footer>
+<div class="tut" id="tut" hidden role="dialog" aria-modal="true" aria-labelledby="tt">
+  <div class="tbox">
+    <button class="tskip" id="tskip" data-t="tskip"></button>
+    <div class="tico" id="ti"></div><h2 id="tt"></h2><p id="tp"></p>
+    <div class="dots" id="dots"></div>
+    <label class="never"><input type="checkbox" id="never"><span data-t="tnever"></span></label>
+    <div class="trow"><button class="tb" id="tback" data-t="tback"></button><button class="go tgo" id="tnext"></button></div>
+  </div>
+</div>
+<script>
+var UI={en:{title:"Life Cards",sub:"Pull a card. Answer out loud.",draw:"Draw a card",next:"Next card",hint:"Tap the card or press Space",drawn:"Cards drawn",recent:"Recent cards",tap:"Tap to draw",normal:"Back to normal view",skip:"I’d rather not answer",chal:"Pick a Challenge",dev:"Developer",tskip:"Skip",tnext:"Next",tback:"Back",tdone:"Let’s play",tnever:"Don’t show again",more:"Show other options"},
+tl:{title:"Baraha ng Buhay",sub:"Bumunot ng baraha. Sagutin nang malakas.",draw:"Bumunot ng baraha",next:"Susunod na baraha",hint:"I-tap ang baraha o pindutin ang Space",drawn:"Mga nabunot",recent:"Mga huling baraha",tap:"I-tap para bumunot",normal:"Bumalik sa karaniwang tingin",skip:"Ayoko munang sumagot",chal:"Pumili ng Hamon",dev:"Developer",tskip:"Laktawan",tnext:"Susunod",tback:"Bumalik",tdone:"Simulan na",tnever:"Huwag nang ipakita ulit",more:"Ibang mga pagpipilian"}};
+var CATS=[{en:"Love & People",tl:"Mga Mahal sa Buhay",c:"#E5546F",g:"♥"},{en:"Dreams",tl:"Pangarap",c:"#7B6CF6",g:"✦"},{en:"Memories",tl:"Alaala",c:"#E08E1B",g:"◐"},{en:"Values",tl:"Paninindigan",c:"#1FA392",g:"◆"},{en:"Fun",tl:"Kasiyahan",c:"#D84A9E",g:"☺"},{en:"Growth",tl:"Pag-unlad",c:"#3F8FE0",g:"▲"}];
+var Q=[
+[0,"Who in your life deserves a thank-you you haven’t given yet?","Sino ang dapat mong pasalamatan pero hindi mo pa nasasabihan hanggang ngayon?"],
+[0,"What does being loved well look like to you?","Para sa iyo, ano ang pakiramdam ng minamahal nang tama?"],
+[0,"Who taught you the most about kindness?","Sino ang higit na nagturo sa iyo kung paano maging mabuting tao?"],
+[0,"What’s one question you wish people asked you more often?","Anong tanong ang gusto mong mas madalas itanong sa iyo ng mga tao?"],
+[1,"If money didn’t matter, how would you spend an ordinary Tuesday?","Kung hindi problema ang pera, ano ang gagawin mo sa isang ordinaryong Martes?"],
+[1,"What did you want to be at seven, and what part of that is still true?","Ano ang pangarap mong maging noong pitong taong gulang ka, at alin doon ang totoo pa rin hanggang ngayon?"],
+[1,"Where will you be in five years? Answer in one honest sentence.","Nasaan ka na kaya limang taon mula ngayon? Sagutin sa isang tapat na pangungusap."],
+[1,"What’s a dream you’ve quietly put on hold?","Anong pangarap ang tahimik mong isinantabi muna?"],
+[2,"What’s your favorite memory of home?","Ano ang pinakamasaya mong alaala sa inyong tahanan?"],
+[2,"Which smell or song takes you straight back to childhood?","Anong amoy o kanta ang agad nagbabalik sa iyo sa pagkabata?"],
+[2,"What’s the best day of your life so far?","Alin ang pinakamasayang araw ng buhay mo hanggang ngayon?"],
+[2,"What small moment will you never forget?","Anong maliit na sandali ang hinding-hindi mo makakalimutan?"],
+[3,"What would you never compromise on, even for a great offer?","Ano ang hindi mo ipagpapalit kahit gaano pa kaganda ang alok?"],
+[3,"What does “enough” mean to you?","Ano ang ibig sabihin ng “sapat” para sa iyo?"],
+[3,"When did you last change your mind about something important?","Kailan ka huling nagbago ng isip tungkol sa isang mahalagang bagay?"],
+[3,"What do you want to be remembered for?","Paano mo gustong maalala ka ng mga tao?"],
+[4,"What silly thing makes you laugh every single time?","Anong kalokohan ang hindi nawawalang nakakatawa para sa iyo?"],
+[4,"Who would you invite to dinner, living or gone?","Sino ang gusto mong makasalo sa hapunan, buhay man o yumao na?"],
+[4,"What’s your comfort food, and why?","Anong pagkain ang nagpapagaan ng loob mo, at bakit?"],
+[4,"You get one superpower for a day. What do you do first?","Bibigyan ka ng superpower sa loob ng isang araw. Ano ang una mong gagawin?"],
+[5,"Which mistake ended up teaching you the most?","Anong pagkakamali ang pinakamarami mong natutunan?"],
+[5,"What would you tell your younger self?","Ano ang ipapayo mo sa sarili mo noong bata ka pa?"],
+[5,"What small habit could you start this week?","Anong maliit na magandang gawi ang puwede mong simulan ngayong linggo?"],
+[5,"What are you afraid of that you’d like to face?","Ano ang kinatatakutan mo na gusto mo nang harapin?"]];
+var CH=[
+["Do your best impression of someone in the room.","Gayahin mo ang isa sa mga kasama mo."],
+["Sing the chorus of any song with full drama.","Kantahin ang chorus ng kahit anong kanta nang todo-drama."],
+["Tell a joke. If nobody laughs, tell another.","Magbiro ka. Kapag walang tumawa, magbiro ulit."],
+["Talk like a news anchor for one whole minute.","Magsalita ka na parang newscaster sa loob ng isang minuto."],
+["Do 10 jumping jacks right now.","Mag-jumping jack ka ng sampung beses ngayon din."],
+["Give someone here a sincere compliment.","Bigyan mo ng taos-pusong papuri ang isa sa mga kasama mo."],
+["Act out a movie scene without words while the others guess.","Isadula mo ang isang eksena sa pelikula nang walang salita, at huhulaan ito ng iba."],
+["Describe your day like a dramatic movie trailer.","Ikuwento mo ang araw mo na parang trailer ng pelikula."],
+["Show your best dance move for 10 seconds.","Ipakita mo ang pinakamagaling mong sayaw sa loob ng sampung segundo."],
+["Say “red lorry, yellow lorry” three times fast.","Sabihin nang tatlong beses at mabilis: “Pitong puting pusa sa pintuan.”"],
+["Let the group give you a silly nickname until the game ends.","Hayaan mong bigyan ka ng grupo ng nakakatawang palayaw hanggang matapos ang laro."],
+["Share the most embarrassing song on your playlist.","Ibahagi mo ang pinakanakakahiyang kanta sa playlist mo."]];
+var T=[
+{i:"🃏",en:["Draw a card","Tap the card or press Space to flip a random life question. There’s no limit — the deck keeps reshuffling."],tl:["Bumunot ng baraha","I-tap ang baraha o pindutin ang Space para makakuha ng random na tanong sa buhay. Walang limitasyon — patuloy na hinahalo ang deck."]},
+{i:"💬",en:["Answer out loud","Read the question and share your honest answer with the group."],tl:["Sagutin nang malakas","Basahin ang tanong at ibahagi sa grupo ang tapat mong sagot."]},
+{i:"🎭",en:["Rather not answer?","Tap “I’d rather not answer” to pick one of 3 fun challenges instead."],tl:["Ayaw sumagot?","Pindutin ang “Ayoko munang sumagot” para pumili ng isa sa 3 masayang hamon."]},
+{i:"🎨",en:["Make it yours","Switch the language (EN/TL), theme (☀/☾) and full-screen card mode (⤢) at the top. Tap ? anytime to see this again."],tl:["Gawing sa iyo","Palitan ang wika (EN/TL), tema (☀/☾) at full-screen na baraha (⤢) sa itaas. I-tap ang ? anumang oras para mapanood ulit ito."]}];
+var ts=0;
+function tutRender(){var s=T[ts],L=st.lang;$("ti").textContent=s.i;$("tt").textContent=s[L][0];$("tp").textContent=s[L][1];$("dots").innerHTML=T.map(function(_,i){return "<i class='"+(i===ts?"on":"")+"'></i>"}).join("");$("tback").style.visibility=ts?"visible":"hidden";$("tnext").textContent=t(ts===T.length-1?"tdone":"tnext")}
+function tutOpen(){ts=0;$("never").checked=ld("lc-tut")==="1";$("tut").hidden=false;tutRender();$("tnext").focus()}
+function tutClose(){sv("lc-tut",$("never").checked?"1":"0");$("tut").hidden=true}
+function pick3(){var a=CH.map(function(_,i){return i}).filter(function(i){return st.chal.indexOf(i)<0});for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=a[i];a[i]=a[j];a[j]=x}return a.slice(0,3)}
+function updSkip(){var s=$("skip"),k=st.mode==="c"?"more":"skip";s.hidden=!st.flipped;s.setAttribute("data-t",k);s.textContent=t(k)}
+function skip(){if(st.busy||!st.flipped)return;st.busy=true;flip(false);setTimeout(function(){st.chal=pick3();st.mode="c";paintCard();flip(true);setTimeout(function(){st.busy=false},650)},420)}
+var $=function(i){return document.getElementById(i)};
+var st={mode:"q",chal:[],lang:"tl",theme:null,deck:[],cur:-1,count:0,flipped:false,busy:false,hist:[]};
+function sv(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function ld(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function applyTheme(t){st.theme=t;document.documentElement.setAttribute("data-theme",t);$("theme").textContent=t==="dark"?"☀":"☾";sv("lc-theme",t)}
+function t(k){return UI[st.lang][k]}
+function paintText(){
+  document.documentElement.lang=st.lang;
+  document.querySelectorAll("[data-t]").forEach(function(e){var k=e.getAttribute("data-t");e.textContent=(k==="draw"&&st.flipped)?t("next"):t(k)});
+  $("en").setAttribute("aria-pressed",st.lang==="en");$("tl").setAttribute("aria-pressed",st.lang==="tl");
+  if(st.cur>=0)paintCard();paintHist();tutRender()}
+function paintCard(){
+  if(st.mode==="c"){$("front").style.setProperty("--c","#F0602D");$("cat").textContent=t("chal");$("glyph").textContent="★";$("pip").textContent="★";var ol=document.createElement("ol");st.chal.forEach(function(ci,k){var li=document.createElement("li"),b=document.createElement("b"),s=document.createElement("span");b.textContent=k+1;s.textContent=CH[ci][st.lang==="en"?0:1];li.appendChild(b);li.appendChild(s);ol.appendChild(li)});$("q").textContent="";$("q").appendChild(ol);return}
+  var q=Q[st.cur],c=CATS[q[0]];
+  $("front").style.setProperty("--c",c.c);$("cat").textContent=c[st.lang];$("glyph").textContent=c.g;$("pip").textContent=c.g;
+  $("q").textContent=q[st.lang==="en"?1:2]}
+function paintHist(){
+  $("recent").hidden=!st.hist.length;
+  var box=$("chips");box.innerHTML="";
+  st.hist.slice(0,5).forEach(function(i){
+    var b=document.createElement("button");b.className="chip";b.style.setProperty("--c",CATS[Q[i][0]].c);
+    b.innerHTML="<i></i><span></span>";b.lastChild.textContent=Q[i][st.lang==="en"?1:2];
+    b.onclick=function(){show(i)};box.appendChild(b)})}
+function pick(){
+  if(!st.deck.length){
+    var d=Q.map(function(_,i){return i});
+    for(var i=d.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=d[i];d[i]=d[j];d[j]=x}
+    if(d[d.length-1]===st.cur&&d.length>1){var y=d[0];d[0]=d[d.length-1];d[d.length-1]=y}
+    st.deck=d}
+  return st.deck.pop()}
+function flip(on){st.flipped=on;updSkip();$("card").classList.toggle("flipped",on);$("go").textContent=on?t("next"):t("draw")}
+function show(i,fresh){
+  if(st.busy)return;st.busy=true;
+  var go=function(){
+    st.mode="q";st.cur=i;paintCard();flip(true);
+    if(fresh){st.count++;var n=$("n");n.textContent=st.count;n.classList.remove("bump");void n.offsetWidth;n.classList.add("bump");
+      st.hist.unshift(i);if(st.hist.length>5)st.hist.pop();paintHist()}
+    setTimeout(function(){st.busy=false},650)};
+  if(st.flipped){flip(false);setTimeout(go,420)}else go()}
+function draw(){show(pick(),true)}
+$("card").onclick=draw;$("go").onclick=draw;$("skip").onclick=skip;$("tskip").onclick=tutClose;$("help").onclick=tutOpen;
+$("tback").onclick=function(){if(ts>0){ts--;tutRender()}};
+$("tnext").onclick=function(){if(ts<T.length-1){ts++;tutRender()}else tutClose()};
+document.addEventListener("keydown",function(e){if(e.code==="Space"&&e.target===document.body&&$("tut").hidden){e.preventDefault();draw()}});
+$("en").onclick=function(){st.lang="en";sv("lc-lang","en");paintText()};
+$("tl").onclick=function(){st.lang="tl";sv("lc-lang","tl");paintText()};
+$("theme").onclick=function(){applyTheme(st.theme==="dark"?"light":"dark")};
+$("stage").addEventListener("pointermove",function(e){
+  if(e.pointerType==="touch")return;
+  var r=this.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+  $("tilt").style.setProperty("--ry",(x*14)+"deg");$("tilt").style.setProperty("--rx",(-y*14)+"deg")});
+$("stage").addEventListener("pointerleave",function(){$("tilt").style.setProperty("--ry","0deg");$("tilt").style.setProperty("--rx","0deg")});
+function setFull(on){document.body.classList.toggle("full",on);var b=$("full");b.setAttribute("aria-pressed",on);b.textContent=on?"\u2921":"\u2922";sv("lc-full",on?"1":"0")}
+$("full").onclick=function(){setFull(!document.body.classList.contains("full"))};
+document.addEventListener("keydown",function(e){if(e.key==="Escape"){if(!$("tut").hidden)tutClose();else setFull(false)}});
+$("exit").onclick=function(){setFull(false)};
+var sl=ld("lc-lang");st.lang=sl==="en"?"en":"tl";
+applyTheme(ld("lc-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"));
+paintText();setFull(ld("lc-full")==="1");if(ld("lc-tut")!=="1")tutOpen();
+</script>
+</body>
+</html>
