@@ -143,8 +143,8 @@ body.full footer{display:none}
   </div>
 </div>
 <script>
-var UI={en:{title:"Life Cards",sub:"Pull a card. Answer out loud.",draw:"Draw a card",next:"Next card",hint:"Tap the card or press Space",drawn:"Cards drawn",recent:"Recent cards",tap:"Tap to draw",normal:"Back to normal view",skip:"I’d rather not answer",chal:"Pick a Challenge",dev:"Developer",tskip:"Skip",tnext:"Next",tback:"Back",tdone:"Let’s play",tnever:"Don’t show again",more:"Show other options"},
-tl:{title:"Baraha ng Buhay",sub:"Bumunot ng baraha. Sagutin nang malakas.",draw:"Bumunot ng baraha",next:"Susunod na baraha",hint:"I-tap ang baraha o pindutin ang Space",drawn:"Mga nabunot",recent:"Mga huling baraha",tap:"I-tap para bumunot",normal:"Bumalik sa karaniwang tingin",skip:"Ayoko munang sumagot",chal:"Pumili ng Hamon",dev:"Developer",tskip:"Laktawan",tnext:"Susunod",tback:"Bumalik",tdone:"Simulan na",tnever:"Huwag nang ipakita ulit",more:"Ibang mga pagpipilian"}};
+var UI={en:{title:"Life Cards",sub:"Pull a card. Answer out loud.",draw:"Draw a card",next:"Next card",hint:"Tap the card or press Space",drawn:"Cards drawn",recent:"Recent cards",tap:"Tap to draw",normal:"Back to normal view",skip:"I’d rather not answer",chal:"Pick a Challenge",dev:"Creator",tskip:"Skip",tnext:"Next",tback:"Back",tdone:"Let’s play",tnever:"Don’t show again",more:"Show other options"},
+tl:{title:"Baraha ng Buhay",sub:"Bumunot ng baraha. Sagutin nang malakas.",draw:"Bumunot ng baraha",next:"Susunod na baraha",hint:"I-tap ang baraha o pindutin ang Space",drawn:"Mga nabunot",recent:"Mga huling baraha",tap:"I-tap para bumunot",normal:"Bumalik sa karaniwang tingin",skip:"Ayoko munang sumagot",chal:"Pumili ng Hamon",dev:"Tagapaglikha",tskip:"Laktawan",tnext:"Susunod",tback:"Bumalik",tdone:"Simulan na",tnever:"Huwag nang ipakita ulit",more:"Ibang mga pagpipilian"}};
 var CATS=[{en:"Love & People",tl:"Mga Mahal sa Buhay",c:"#E5546F",g:"♥"},{en:"Dreams",tl:"Pangarap",c:"#7B6CF6",g:"✦"},{en:"Memories",tl:"Alaala",c:"#E08E1B",g:"◐"},{en:"Values",tl:"Paninindigan",c:"#1FA392",g:"◆"},{en:"Fun",tl:"Kasiyahan",c:"#D84A9E",g:"☺"},{en:"Growth",tl:"Pag-unlad",c:"#3F8FE0",g:"▲"}];
 var Q=[
 [0,"Who in your life deserves a thank-you you haven’t given yet?","Sino ang dapat mong pasalamatan pero hindi mo pa nasasabihan hanggang ngayon?"],
@@ -197,7 +197,7 @@ function pick3(){var a=CH.map(function(_,i){return i}).filter(function(i){return
 function updSkip(){var s=$("skip"),k=st.mode==="c"?"more":"skip";s.hidden=!st.flipped;s.setAttribute("data-t",k);s.textContent=t(k)}
 function skip(){if(st.busy||!st.flipped)return;st.busy=true;flip(false);setTimeout(function(){st.chal=pick3();st.mode="c";paintCard();flip(true);setTimeout(function(){st.busy=false},650)},420)}
 var $=function(i){return document.getElementById(i)};
-var st={mode:"q",chal:[],lang:"tl",theme:null,deck:[],cur:-1,count:0,flipped:false,busy:false,hist:[]};
+var st={mode:"q",chal:[],lang:"en",theme:null,deck:[],cur:-1,count:0,flipped:false,busy:false,hist:[]};
 function sv(k,v){try{localStorage.setItem(k,v)}catch(e){}}
 function ld(k){try{return localStorage.getItem(k)}catch(e){return null}}
 function applyTheme(t){st.theme=t;document.documentElement.setAttribute("data-theme",t);$("theme").textContent=t==="dark"?"☀":"☾";sv("lc-theme",t)}
@@ -252,7 +252,7 @@ function setFull(on){document.body.classList.toggle("full",on);var b=$("full");b
 $("full").onclick=function(){setFull(!document.body.classList.contains("full"))};
 document.addEventListener("keydown",function(e){if(e.key==="Escape"){if(!$("tut").hidden)tutClose();else setFull(false)}});
 $("exit").onclick=function(){setFull(false)};
-var sl=ld("lc-lang");st.lang=sl==="en"?"en":"tl";
+var sl=ld("lc-lang");st.lang=sl==="tl"?"tl":"en";
 applyTheme(ld("lc-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"));
 paintText();setFull(ld("lc-full")==="1");if(ld("lc-tut")!=="1")tutOpen();
 </script>
