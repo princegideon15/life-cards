@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Life Cards</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%232A2368'/%3E%3Cstop offset='1' stop-color='%235B49D6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg transform='rotate(-12 32 34)'%3E%3Crect x='12' y='8' width='30' height='46' rx='6' fill='url(%23g)' stroke='%23FFC857' stroke-width='2'/%3E%3Ccircle cx='27' cy='31' r='7.5' fill='%23FFC857'/%3E%3C/g%3E%3Cg transform='rotate(10 38 34)'%3E%3Crect x='24' y='10' width='30' height='46' rx='6' fill='%23fff' stroke='%23D9D3EE' stroke-width='1.5'/%3E%3Cpath d='M24 16a6 6 0 0 1 6-6h18a6 6 0 0 1 6 6v6H24z' fill='%237B6CF6'/%3E%3Cpath d='M39 49C29 42.5 30.5 32.5 35.5 32.5c2 0 3 1.4 3.5 2.6.5-1.2 1.5-2.6 3.5-2.6 5 0 6.5 10-3.5 16.5z' fill='%23E5546F'/%3E%3C/g%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#EEEAF8;--surface:#fff;--ink:#1E1A3A;--muted:#6A6590;--line:#d9d3ee;--back1:#2A2368;--back2:#4637a8;--gold:#FFC857;--shadow:0 20px 50px -18px rgba(42,35,104,.45);color-scheme:light}
@@ -100,6 +101,8 @@ body.full footer{display:none}
 .logo{width:48px;height:48px;flex:none;filter:drop-shadow(0 6px 10px rgba(42,35,104,.35))}
 header{flex-wrap:wrap}
 @media (max-width:430px){.logo{width:38px;height:38px}h1{font-size:1.15rem}.sub{display:none}}
+.emblem{background:rgba(255,255,255,.1);width:56%;box-shadow:0 0 0 2px var(--gold),0 0 0 12px rgba(255,200,87,.18)}
+.emblem svg{width:80%;height:80%}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
 </style>
 </head>
@@ -119,7 +122,7 @@ header{flex-wrap:wrap}
     <div class="layer l2"></div><div class="layer l1"></div>
     <div class="tilt" id="tilt">
       <button class="card" id="card" aria-live="polite">
-        <div class="face back"><div class="emblem">?</div><div class="tap" data-t="tap"></div></div>
+        <div class="face back"><div class="emblem"><svg viewBox="0 0 64 64" aria-hidden="true"><g transform="rotate(-12 32 34)"><rect x="12" y="8" width="30" height="46" rx="6" fill="url(#lg)" stroke="#FFC857" stroke-width="2"/><circle cx="27" cy="31" r="7.5" fill="#FFC857"/><text x="27" y="35.6" text-anchor="middle" font-size="12" font-weight="800" fill="#2A2368" font-family="Bricolage Grotesque,system-ui,sans-serif">?</text></g><g transform="rotate(10 38 34)"><rect x="24" y="10" width="30" height="46" rx="6" fill="#fff" stroke="#D9D3EE" stroke-width="1.5"/><path d="M24 16a6 6 0 0 1 6-6h18a6 6 0 0 1 6 6v6H24z" fill="#7B6CF6"/><path d="M39 49C29 42.5 30.5 32.5 35.5 32.5c2 0 3 1.4 3.5 2.6.5-1.2 1.5-2.6 3.5-2.6 5 0 6.5 10-3.5 16.5z" fill="#E5546F"/></g></svg></div><div class="tap" data-t="tap"></div></div>
         <div class="face front" id="front">
           <div class="band"><span id="cat"></span><span id="glyph"></span></div>
           <div class="q" id="q"></div>
