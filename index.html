@@ -112,6 +112,13 @@ header{flex-wrap:wrap}
 @media (max-width:430px){.logo{width:38px;height:38px}h1{font-size:1.15rem}.sub{display:none}}
 .emblem{background:rgba(255,255,255,.1);width:56%;box-shadow:0 0 0 2px var(--gold),0 0 0 12px rgba(255,200,87,.18)}
 .emblem svg{width:80%;height:80%}
+.tcount{font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#7B6CF6;margin-bottom:6px}
+.tut.spotting{background:none;-webkit-backdrop-filter:none;backdrop-filter:none;display:block}
+.tut.spotting .tbox{position:fixed;animation:none;padding:30px 20px 16px;z-index:2;transition:left .35s,top .35s,width .35s}
+.tut.spotting .tico{display:none}
+.tut.spotting .tbox p{min-height:3.9em}
+.spot{position:fixed;z-index:1;border-radius:20px;box-shadow:0 0 0 9999px rgba(10,8,30,.74),0 0 0 3px var(--gold),0 0 24px 4px rgba(255,200,87,.5);pointer-events:none;transition:left .35s,top .35s,width .35s,height .35s}
+.spot[hidden]{display:none}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
 </style>
 </head>
@@ -150,17 +157,18 @@ header{flex-wrap:wrap}
 </main>
 <footer><span data-t="dev"></span>: <a href="https://princegideon15-portfolio.vercel.app/" target="_blank" rel="noopener noreferrer">GPDB</a></footer>
 <div class="tut" id="tut" hidden role="dialog" aria-modal="true" aria-labelledby="tt">
+  <div class="spot" id="spot" hidden></div>
   <div class="tbox">
     <button class="tskip" id="tskip" data-t="tskip"></button>
-    <div class="tico" id="ti"></div><h2 id="tt"></h2><p id="tp"></p>
+    <div class="tico" id="ti"></div><div class="tcount" id="tc"></div><h2 id="tt"></h2><p id="tp"></p>
     <div class="dots" id="dots"></div>
     <label class="never"><input type="checkbox" id="never"><span data-t="tnever"></span></label>
     <div class="trow"><button class="tb" id="tback" data-t="tback"></button><button class="go tgo" id="tnext"></button></div>
   </div>
 </div>
 <script>
-var UI={en:{title:"Life Cards",sub:"Pull a card. Answer out loud.",draw:"Draw a card",next:"Next card",hint:"Tap the card or press Space",drawn:"Cards drawn",recent:"Recent cards",tap:"Tap to draw",normal:"Back to normal view",skip:"I’d rather not answer",chal:"Pick a Challenge",dev:"Creator",tskip:"Skip",tnext:"Next",tback:"Back",tdone:"Let’s play",tnever:"Don’t show again",more:"Show other options"},
-tl:{title:"Baraha ng Buhay",sub:"Bumunot ng baraha. Sagutin nang malakas.",draw:"Bumunot ng baraha",next:"Susunod na baraha",hint:"I-tap ang baraha o pindutin ang Space",drawn:"Mga nabunot",recent:"Mga huling baraha",tap:"I-tap para bumunot",normal:"Bumalik sa karaniwang tingin",skip:"Ayoko munang sumagot",chal:"Pumili ng Hamon",dev:"Tagapaglikha",tskip:"Laktawan",tnext:"Susunod",tback:"Bumalik",tdone:"Simulan na",tnever:"Huwag nang ipakita ulit",more:"Ibang mga pagpipilian"}};
+var UI={en:{title:"Life Cards",sub:"Pull a card. Answer out loud.",draw:"Draw a card",next:"Next card",hint:"Tap the card or press Space",drawn:"Cards drawn",recent:"Recent cards",tap:"Tap to draw",normal:"Back to normal view",skip:"I’d rather not answer",chal:"Pick a Challenge",dev:"Creator",tskip:"Skip",tnext:"Next",tback:"Back",tdone:"Let’s play",tnever:"Don’t show again",tstep:"Step",tof:"of",more:"Show other options"},
+tl:{title:"Baraha ng Buhay",sub:"Bumunot ng baraha. Sagutin nang malakas.",draw:"Bumunot ng baraha",next:"Susunod na baraha",hint:"I-tap ang baraha o pindutin ang Space",drawn:"Mga nabunot",recent:"Mga huling baraha",tap:"I-tap para bumunot",normal:"Bumalik sa karaniwang tingin",skip:"Ayoko munang sumagot",chal:"Pumili ng Hamon",dev:"Tagapaglikha",tskip:"Laktawan",tnext:"Susunod",tback:"Bumalik",tdone:"Simulan na",tnever:"Huwag nang ipakita ulit",tstep:"Hakbang",tof:"ng",more:"Ibang mga pagpipilian"}};
 var CATS=[{en:"Love & People",tl:"Mga Mahal sa Buhay",c:"#E5546F",g:"♥"},{en:"Dreams",tl:"Pangarap",c:"#7B6CF6",g:"✦"},{en:"Memories",tl:"Alaala",c:"#E08E1B",g:"◐"},{en:"Values",tl:"Paninindigan",c:"#1FA392",g:"◆"},{en:"Fun",tl:"Kasiyahan",c:"#D84A9E",g:"☺"},{en:"Growth",tl:"Pag-unlad",c:"#3F8FE0",g:"▲"}];
 var Q=[
 [0,"Who in your life deserves a thank-you you haven’t given yet?","Sino ang dapat mong pasalamatan pero hindi mo pa nasasabihan hanggang ngayon?"],
@@ -201,14 +209,39 @@ var CH=[
 ["Let the group give you a silly nickname until the game ends.","Hayaan mong bigyan ka ng grupo ng nakakatawang palayaw hanggang matapos ang laro."],
 ["Share the most embarrassing song on your playlist.","Ibahagi mo ang pinakanakakahiyang kanta sa playlist mo."]];
 var T=[
-{i:"🃏",en:["Draw a card","Tap the card or press Space to flip a random life question. There’s no limit — the deck keeps reshuffling."],tl:["Bumunot ng baraha","I-tap ang baraha o pindutin ang Space para makakuha ng random na tanong sa buhay. Walang limitasyon — patuloy na hinahalo ang deck."]},
-{i:"💬",en:["Answer out loud","Read the question and share your honest answer with the group."],tl:["Sagutin nang malakas","Basahin ang tanong at ibahagi sa grupo ang tapat mong sagot."]},
-{i:"🎭",en:["Rather not answer?","Tap “I’d rather not answer” to pick one of 3 fun challenges instead."],tl:["Ayaw sumagot?","Pindutin ang “Ayoko munang sumagot” para pumili ng isa sa 3 masayang hamon."]},
-{i:"🎨",en:["Make it yours","Switch the language (EN/TL), theme (☀/☾) and full-screen card mode (⤢) at the top. Tap ? anytime to see this again."],tl:["Gawing sa iyo","Palitan ang wika (EN/TL), tema (☀/☾) at full-screen na baraha (⤢) sa itaas. I-tap ang ? anumang oras para mapanood ulit ito."]}];
-var ts=0;
-function tutRender(){var s=T[ts],L=st.lang;$("ti").textContent=s.i;$("tt").textContent=s[L][0];$("tp").textContent=s[L][1];$("dots").innerHTML=T.map(function(_,i){return "<i class='"+(i===ts?"on":"")+"'></i>"}).join("");$("tback").style.visibility=ts?"visible":"hidden";$("tnext").textContent=t(ts===T.length-1?"tdone":"tnext")}
-function tutOpen(){ts=0;$("never").checked=ld("lc-tut")==="1";$("tut").hidden=false;tutRender();$("tnext").focus()}
-function tutClose(){sv("lc-tut",$("never").checked?"1":"0");$("tut").hidden=true}
+{i:"👋",sel:null,en:["Welcome!","A card game of random life questions. Let’s take a quick tour — it takes less than a minute."],tl:["Maligayang pagdating!","Isang card game ng mga random na tanong sa buhay. Mabilis na pasyal lang ito, hindi aabot ng isang minuto."]},
+{i:"🃏",sel:"#stage",en:["Draw a card","Tap the card (or press Space) to flip a random life question. There’s no limit — the deck keeps reshuffling."],tl:["Bumunot ng baraha","I-tap ang baraha (o pindutin ang Space) para makakuha ng random na tanong sa buhay. Walang limitasyon — patuloy na hinahalo ang deck."]},
+{i:"🎭",sel:"#skip",enter:1,en:["Rather not answer?","Tap “I’d rather not answer” to pick one of 3 fun challenges instead."],tl:["Ayaw sumagot?","Pindutin ang “Ayoko munang sumagot” para pumili ng isa sa 3 masayang hamon."]},
+{i:"⏭",sel:"#go",en:["Next card","Tap here to draw another card. Your count goes up every time."],tl:["Susunod na baraha","Pindutin ito para bumunot ulit. Tataas ang bilang mo sa bawat bunot."]},
+{i:"🎨",sel:".tools",en:["Make it yours","Switch the language (EN/TL), the theme (☀/☾) and full-screen card mode (⤢)."],tl:["Gawing sa iyo","Palitan ang wika (EN/TL), tema (☀/☾) at full-screen na baraha (⤢)."]},
+{i:"🎉",sel:"#help",en:["You’re all set!","Tap ? anytime to replay this tour. Have fun!"],tl:["Handa ka na!","I-tap ang ? anumang oras para panoorin ulit ang gabay na ito. Magsaya!"]}];
+var ts=0,tourDrew=false,tTimer;
+function tutPlace(){
+  var s=T[ts],box=document.querySelector(".tbox"),tut=$("tut"),spot=$("spot");
+  var el=s.sel?document.querySelector(s.sel):null,r=el?el.getBoundingClientRect():null;
+  if(!r||!r.width||!r.height){tut.classList.remove("spotting");spot.hidden=true;box.style.left=box.style.top=box.style.width="";return}
+  tut.classList.add("spotting");spot.hidden=false;
+  var p=8;spot.style.left=(r.left-p)+"px";spot.style.top=(r.top-p)+"px";spot.style.width=(r.width+p*2)+"px";spot.style.height=(r.height+p*2)+"px";
+  var vw=innerWidth,vh=innerHeight,w=Math.min(vw*.92,380);box.style.width=w+"px";
+  var bh=box.offsetHeight,left=Math.max(12,Math.min(vw-w-12,r.left+r.width/2-w/2)),top;
+  if(vh-r.bottom-p>=bh+14)top=r.bottom+p+14;else if(r.top-p>=bh+14)top=r.top-p-bh-14;else top=vh-bh-14;
+  box.style.left=left+"px";box.style.top=Math.max(12,top)+"px"}
+function tutRender(){
+  var s=T[ts],L=st.lang;
+  $("ti").textContent=s.i;$("tt").textContent=s[L][0];$("tp").textContent=s[L][1];
+  $("tc").textContent=t("tstep")+" "+(ts+1)+" "+t("tof")+" "+T.length;
+  $("dots").innerHTML=T.map(function(_,i){return "<i class='"+(i===ts?"on":"")+"'></i>"}).join("");
+  $("tback").style.visibility=ts?"visible":"hidden";
+  $("tnext").textContent=t(ts===T.length-1?"tdone":"tnext");
+  clearTimeout(tTimer);var d=30;
+  if($("tut").hidden)return;
+  if(s.enter&&(!st.flipped||st.mode==="c")){if(!st.flipped)tourDrew=true;draw();d=850}
+  tTimer=setTimeout(tutPlace,d)}
+function tutOpen(){setFull(false);ts=0;tourDrew=false;$("never").checked=ld("lc-tut")==="1";$("tut").hidden=false;tutRender();$("tnext").focus()}
+function tutClose(){
+  clearTimeout(tTimer);sv("lc-tut",$("never").checked?"1":"0");$("tut").hidden=true;$("tut").classList.remove("spotting");$("spot").hidden=true;
+  if(tourDrew){tourDrew=false;st.count=0;st.hist=[];st.cur=-1;$("n").textContent="0";flip(false);paintHist()}}
+window.addEventListener("resize",function(){if(!$("tut").hidden)tutPlace()});
 function pick3(){var a=CH.map(function(_,i){return i}).filter(function(i){return st.chal.indexOf(i)<0});for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=a[i];a[i]=a[j];a[j]=x}return a.slice(0,3)}
 function updSkip(){var s=$("skip"),k=st.mode==="c"?"more":"skip";s.hidden=!st.flipped;s.setAttribute("data-t",k);s.textContent=t(k)}
 function skip(){if(st.busy||!st.flipped)return;st.busy=true;flip(false);setTimeout(function(){st.chal=pick3();st.mode="c";paintCard();flip(true);setTimeout(function(){st.busy=false},650)},420)}
